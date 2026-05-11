@@ -1,6 +1,7 @@
 import os
 import sys
 import yaml
+import argparse
 
 
 def yamlcheck(ysrc):
@@ -18,13 +19,17 @@ def yamlcheck(ysrc):
 
 
 def main():
-    repos = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("directory", help="local directory")
+    args = parser.parse_args()
+
+    repos = args.directory
     for repo in os.listdir(repos):
         rdir = os.path.join(repos, repo)
-        fs = [os.path.join(rdir, f) for f in os.listdir(rdir)]
-        if all([yamlcheck(ysrc) for ysrc in fs \
-                if os.path.splitext(ysrc)[-1] in {'yaml', 'yml'}]):
-            print(os.path.basename(rdir).replace('___', '/', 1))
+        fs = [os.path.join(rdir, f) for f in os.listdir(rdir)\
+              if os.path.splitext(f)[-1] in {'.yaml', '.yml'}]
+        if all([yamlcheck(ysrc) for ysrc in fs]):
+            print(os.path.basename(rdir).replace('_', '/', 1))
 
 
 if __name__ == "__main__":

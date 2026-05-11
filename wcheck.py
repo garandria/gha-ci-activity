@@ -7,12 +7,31 @@ import argparse
 def yamlcheck(ysrc):
     workflow = None
     with open(ysrc, 'r') as buf:
-        workflow = yaml.safe_load(buf)
+        try:
+            workflow = yaml.safe_load(buf)
+        except yaml.YAMLError:
+            return False
     checks = []
+    if workflow is None:
+        return False
+    if 'jobs' not in workflow:
+        return False
+    if workflow['jobs'] is None:
+        return False
+    if not isinstance(workflow['jobs'], dict):
+        return False
     for name in workflow['jobs']:
         job = workflow['jobs'][name]
+        if job is None:
+            return False
+        if not isinstance(job, dict):
+            return False
         if 'runs-on' in job:
-            checks.append(job['runs-on'].startswith('ubuntu-'))
+            val = job['runs-on']
+            if type(val) == str:
+                checks.append(val.startswith('ubuntu-'))
+            else:
+                return False
         else:
             return False
     return all(checks)

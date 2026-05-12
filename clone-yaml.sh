@@ -16,8 +16,13 @@ while IFS= read -r repository; do
     gitdir=${repo}
     outdir=${DATA}/${owner}___${repo}
     echo "** ${repository}"
-    quickclone ${repository}
-    mkdir -p ${outdir}
-    cp -r ${repo}/${WFDIR}/. ${outdir}
-    rm -rf -- "${repo}"		# '--' is necessary when the folder starts with '-'
+    if [ ! -d "$outdir" ]; then
+	echo "** ${repository}"
+	quickclone "${repository}"
+	mkdir -p "${outdir}"
+	cp -r "${repo}/${WFDIR}/." "${outdir}"
+	rm -rf -- "${repo}"  # '--' is necessary when the folder starts with '-'
+    else
+	echo "  Already exists"
+    fi
 done

@@ -7,10 +7,10 @@ mkdir -p ${DATA}
 
 quickclone() {
     GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --sparse https://github.com/${1}
-    git -C $(basename ${1}) sparse-checkout set ${WFDIR}
+    git -C "$(basename ${1})" sparse-checkout set ${WFDIR}
 }
 
-while read repository ; do
+while IFS= read -r repository; do
     owner=$(dirname ${repository})
     repo=$(basename ${repository})
     gitdir=${repo}
